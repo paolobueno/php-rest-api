@@ -67,6 +67,16 @@ class Client
     public $lookup;
 
     /**
+     * @var Resources\AvailableNumbers
+     */
+    public $availableNumbers;
+    
+    /**
+     * @var Resources\PurchasedNumbers
+     */
+    public $purchasedNumbers;
+
+    /**
      * @var Resources\LookupHlr
      */
     public $lookupHlr;
@@ -171,8 +181,6 @@ class Client
      */
     protected $partnerAccountClient;
 
-    public $numbers;
-
     /**
      * @param string            $accessKey
      * @param Common\HttpClient $httpClient
@@ -187,14 +195,16 @@ class Client
                 'X-MessageBird-Version' => '20170314',
            ));
             $this->partnerAccountClient = new Common\HttpClient(self::PARTNER_ACCOUNT_ENDPOINT);
-            $this->numbersAPIClient = new Common\HttpClient(self::NUMBERSAPI_ENDPOINT);
+            $this->availableNumbersAPIClient = new Common\HttpClient(self::NUMBERSAPI_ENDPOINT);
+            $this->purchasedNumbersAPIClient = new Common\HttpClient(self::NUMBERSAPI_ENDPOINT);
         } else {
             $this->ChatAPIHttpClient = $httpClient;
             $this->ConversationsAPIHttpClient = $httpClient;
             $this->HttpClient = $httpClient;
             $this->VoiceAPIHttpClient = $httpClient;
             $this->partnerAccountClient = $httpClient;
-            $this->numbersAPIClient = $httpClient;
+            $this->availableNumbersAPIClient = $httpClient;
+            $this->purchasedNumbersAPIClient = $httpClient;
         }
 
         $this->HttpClient->addUserAgentString('MessageBird/ApiClient/' . self::CLIENT_VERSION);
@@ -212,8 +222,11 @@ class Client
         $this->partnerAccountClient->addUserAgentString('MessageBird/ApiClient/' . self::CLIENT_VERSION);
         $this->partnerAccountClient->addUserAgentString($this->getPhpVersion());
 
-        $this->numbersAPIClient->addUserAgentString('MessageBird/ApiClient/' . self::CLIENT_VERSION);
-        $this->numbersAPIClient->addUserAgentString($this->getPhpVersion());
+        $this->availableNumbersAPIClient->addUserAgentString('MessageBird/ApiClient/' . self::CLIENT_VERSION);
+        $this->availableNumbersAPIClient->addUserAgentString($this->getPhpVersion());
+
+        $this->purchasedNumbersAPIClient->addUserAgentString('MessageBird/ApiClient/' . self::CLIENT_VERSION);
+        $this->purchasedNumbersAPIClient->addUserAgentString($this->getPhpVersion());
 
         if ($accessKey !== null) {
             $this->setAccessKey($accessKey);
@@ -243,7 +256,8 @@ class Client
         $this->conversationMessages = new Resources\Conversation\Messages($this->ConversationsAPIHttpClient);
         $this->conversationWebhooks = new Resources\Conversation\Webhooks($this->ConversationsAPIHttpClient);
         $this->partnerAccounts      = new Resources\PartnerAccount\Accounts($this->partnerAccountClient);
-        $this->availableNumbers = new Resources\AvailableNumbers($this->numbersAPIClient);
+        $this->availableNumbers     = new Resources\AvailableNumbers($this->availableNumbersAPIClient);
+        $this->purchasedNumbers     = new Resources\PurchasedNumbers($this->purchasedNumbersAPIClient);
     }
 
     /**
@@ -258,7 +272,8 @@ class Client
         $this->HttpClient->setAuthentication($Authentication);
         $this->VoiceAPIHttpClient->setAuthentication($Authentication);
         $this->partnerAccountClient->setAuthentication($Authentication);
-        $this->numbersAPIClient->setAuthentication($Authentication);
+        $this->availableNumbersAPIClient->setAuthentication($Authentication);
+        $this->purchasedNumbersAPIClient->setAuthentication($Authentication);
     }
 
     /**

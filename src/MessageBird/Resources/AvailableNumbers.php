@@ -54,28 +54,5 @@ class AvailableNumbers
 
         return $this->processRequest($body);
     }
-
-    /**
-     * @param string $body
-     *
-     * @return Objects\Number
-     * @throws \MessageBird\Exceptions\RequestException
-     * @throws \MessageBird\Exceptions\ServerException
-     */
-    public function processRequest($body)
-    {
-        $body = @json_decode($body);
-
-        if ($body === null or $body === false) {
-            throw new Exceptions\ServerException('Got an invalid JSON response from the server.');
-        }
-
-        if (empty($body->errors)) {
-            return Objects\Number.loadFromArray($body->data[0]);
-        }
-
-        $ResponseError = new Common\ResponseError($body);
-        throw new Exceptions\RequestException($ResponseError->getErrorString());
-    }
 }
 ?>
