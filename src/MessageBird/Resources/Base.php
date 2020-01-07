@@ -156,6 +156,7 @@ class Base
      */
     public function processRequest($body)
     {
+        var_dump($body);
         $body = @json_decode($body);
 
         if ($body === null or $body === false) {
