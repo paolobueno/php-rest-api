@@ -1,0 +1,7 @@
+parameters:
+  autoload_paths:
+    - 'autoload-tests.php'
+  paths:
+    - 'tests/integration'
+services:
+  Rector\PHPUnit\Rector\ExceptionAnnotationRector:
