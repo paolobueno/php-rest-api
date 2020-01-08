@@ -26,64 +26,10 @@ class PhoneNumbers
         $this->HttpClient = $HttpClient;
     }
 
-    /**
-     * @param string $countryCode
-     * @param array $parameters
-     *
-     * @return Objects\BaseList
-     * @throws \MessageBird\Exceptions\RequestException
-     * @throws \MessageBird\Exceptions\ServerException
-     */
-    public function getList($countryCode, $parameters = array())
+    public function getList(string $countryCode, array $parameters = array())
     {
-        list($status, , $body) = $this->HttpClient->performHttpRequest(
-            Common\HttpClient::REQUEST_GET,
-            "phone-numbers/$countryCode",
-            $parameters
-        );
-
-        if ($status === 200) {
-            $body = json_decode($body);
-
-            $items = $body->data;
-            unset($body->data);
-
-            $baseList = new Objects\BaseList();
-            $baseList->loadFromArray($body);
-
-            foreach ($items as $item) {
-                $object = new Objects\Number($this->HttpClient);
-
-                $itemObject = $object->loadFromArray($item);
-                $baseList->items[] = $itemObject;
-            }
-            return $baseList;
-        }
-
-        return $this->processRequest($body);
-    }
-
-    /**
-     * @param string $body
-     *
-     * @return Objects\Number
-     * @throws \MessageBird\Exceptions\RequestException
-     * @throws \MessageBird\Exceptions\ServerException
-     */
-    private function processRequest($body)
-    {
-        $body = @json_decode($body);
-
-        if ($body === null or $body === false) {
-            throw new Exceptions\ServerException('Got an invalid JSON response from the server.');
-        }
-
-        if (empty($body->errors)) {
-            return Objects\Number.loadFromArray($body->data[0]);
-        }
-
-        $ResponseError = new Common\ResponseError($body);
-        throw new Exceptions\RequestException($ResponseError->getErrorString());
+        $request = new Common\HttpGetRequest($this->HttpClient, "available-phone-numbers/$countryCode", "Objects\Number");
+        return $request->getList($parameters);
     }
 }
 ?>

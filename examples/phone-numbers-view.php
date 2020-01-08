@@ -9,6 +9,7 @@ try {
     var_dump($phoneNumbers);
 
 } catch (\MessageBird\Exceptions\AuthenticateException $e) {
+    var_dump($e->getMessage());
     // That means that your accessKey is unknown
     print("wrong login\n");
 
